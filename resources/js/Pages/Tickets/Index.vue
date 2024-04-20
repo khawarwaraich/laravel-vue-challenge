@@ -6,17 +6,17 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import DateFormatter from '@/Utils/DateFormatter';
 
 const props = defineProps({
-    tickets: Array,
+    tickets: Object,
 })
 
-const currentPage = ref(1);
-const perPage = ref(10);
+// const currentPage = ref(1);
+// const perPage = ref(10);
 
-const paginatedTickets = computed(() => {
-    let start = (currentPage.value - 1) * perPage.value;
-    let end = start + perPage.value;
-    return props.tickets.slice(start, end);
-})
+// const paginatedTickets = computed(() => {
+//     let start = (currentPage.value - 1) * perPage.value;
+//     let end = start + perPage.value;
+//     return props.tickets.slice(start, end);
+// })
 
 // Function to format the date
 const formatDate = (dateString) => {
@@ -63,7 +63,7 @@ const formatDate = (dateString) => {
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-700">
-                    <tr v-for="ticket in paginatedTickets" :key="ticket.id">
+                    <tr v-for="ticket in tickets.data" :key="ticket.id">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ ticket.id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ formatDate(ticket.created_at) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">{{ ticket.title }}</td>
@@ -79,10 +79,10 @@ const formatDate = (dateString) => {
                     </tbody>
                 </table>
                 <Pagination
-                    :total-items="tickets.length"
-                    :current-page.sync="currentPage"
-                    :per-page="perPage"
-                    @update:currentPage="currentPage = $event"
+                    :total-items="tickets.total"
+                    :current-page="tickets.current_page"
+                    :per-page="tickets.per_page"
+                    @update:current-page="$inertia.visit(route('tickets.index', {page: $event}))"
                 />
             </div>
         </div>
