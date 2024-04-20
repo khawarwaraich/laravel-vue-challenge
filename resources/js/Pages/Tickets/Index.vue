@@ -4,6 +4,7 @@ import {computed, ref} from "vue";
 import { Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import DateFormatter from '@/Utils/DateFormatter';
+import Breadcrumb from '@/Components/Breadcrumb.vue';
 
 const props = defineProps({
     tickets: Object,
@@ -45,11 +46,18 @@ const filteredTickets = computed(() => {
 const formatDate = (dateString) => {
     return DateFormatter.formatDateTime(dateString); // or use formatDate for only date
 }
+
+const breadcrumbItems = [
+        { text: 'Dashboard', link: '/' },
+        { text: 'Tickets'},
+      ];
 </script>
 
 <template>
     <AuthenticatedLayout>
+        
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Breadcrumb :items="breadcrumbItems" />
             <div class="flex justify-between items-center py-6">
                 <h1 class="text-2xl font-semibold text-gray-100">Tickets</h1>
                 <Link :href="route('tickets.create')"

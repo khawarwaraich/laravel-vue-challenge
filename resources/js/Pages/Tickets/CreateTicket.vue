@@ -1,6 +1,7 @@
 <script setup>
 import { useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Breadcrumb from '@/Components/Breadcrumb.vue';
 
 const priorities = {
     low: 'Low',
@@ -26,11 +27,19 @@ function submit() {
         onSuccess: () => form.reset('title', 'description', 'priority', 'status')
     });
 }
+
+const breadcrumbItems = [
+        { text: 'Dashboard', link: '/' },
+        { text: 'Tickets', link: '/tickets' },
+        { text: 'Create Ticket' }
+      ];
+
 </script>
 
 <template>
     <AuthenticatedLayout>
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+            <Breadcrumb :items="breadcrumbItems" />
             <div class="mt-5 md:mt-0 md:col-span-2">
                 <form @submit.prevent="submit">
                     <div class="shadow overflow-hidden sm:rounded-md bg-gray-800 p-6">
