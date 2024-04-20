@@ -29,10 +29,10 @@ const formatDate = (dateString) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-6">
                 <h1 class="text-2xl font-semibold text-gray-100">Tickets</h1>
-                <a href="/tickets/create"
+                <Link :href="route('tickets.create')"
                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Create Ticket
-                </a>
+                </Link>
             </div>
             <div class="overflow-x-auto shadow  sm:rounded-lg">
                 <table class="min-w-full divide-y divide-gray-700">
