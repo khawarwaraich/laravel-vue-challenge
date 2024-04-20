@@ -3,6 +3,7 @@ import Pagination from '@/Components/Pagination.vue'
 import {computed, ref} from "vue";
 import { Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import DateFormatter from '@/Utils/DateFormatter';
 
 const props = defineProps({
     tickets: Array,
@@ -16,6 +17,11 @@ const paginatedTickets = computed(() => {
     let end = start + perPage.value;
     return props.tickets.slice(start, end);
 })
+
+// Function to format the date
+const formatDate = (dateString) => {
+    return DateFormatter.formatDateTime(dateString); // or use formatDate for only date
+}
 </script>
 
 <template>
@@ -59,7 +65,7 @@ const paginatedTickets = computed(() => {
                     <tbody class="divide-y divide-gray-700">
                     <tr v-for="ticket in paginatedTickets" :key="ticket.id">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ ticket.id }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ ticket.created_at }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ formatDate(ticket.created_at) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">{{ ticket.title }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ ticket.user.name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ ticket.priority }}</td>
