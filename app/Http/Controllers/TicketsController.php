@@ -13,15 +13,43 @@ class TicketsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tickets = Ticket::with('user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $query = Ticket::with('user')->orderBy('created_at', 'desc');
+
+        if ($request->has('search')) {
+            $search = strtolower($request->input('search'));
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(title) like ?', ['%' . $search . '%'])
+                    ->orWhereRaw('LOWER(description) like ?', ['%' . $search . '%'])
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->whereRaw('LOWER(name) like ? or LOWER(email) like ?', ['%' . $search . '%', '%' . $search . '%']);
+                    });
+            });
+        }
+
+         // Apply date range filter if provided
+        if ($request->has('startDate') || $request->has('endDate')) {
+            $startDate = $request->input('startDate');
+            $endDate = $request->input('endDate');
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        // Apply other filters if provided
+        $filters = $request->only('priority', 'status');
+        foreach ($filters as $filter => $value) {
+            if ($value) {
+                $query->where($filter, $value);
+            }
+        }
+
+        $tickets = $query->paginate(10);
+        
         return inertia('Tickets/Index', [
             'tickets' => $tickets,
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.

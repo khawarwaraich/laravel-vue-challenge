@@ -1,10 +1,11 @@
 <script setup>
 import Pagination from '@/Components/Pagination.vue'
-import {computed, ref} from "vue";
+import {watchEffect, ref} from "vue";
 import { Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import DateFormatter from '@/Utils/DateFormatter';
 import Breadcrumb from '@/Components/Breadcrumb.vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     tickets: Object,
@@ -18,29 +19,17 @@ const filters = ref({
     status: '',
 });
 
-// Function to apply filters
-const applyFilters = () => {
-    const filteredTickets = props.tickets.data.filter((ticket) => {
-        const searchMatches =
-            ticket.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            ticket.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            ticket.user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            ticket.user.email.toLowerCase().includes(searchQuery.value.toLowerCase());
-
-        const startDateMatch = !filters.value.startDate || ticket.created_at >= filters.value.startDate;
-        const endDateMatch = !filters.value.endDate || ticket.created_at <= filters.value.endDate;
-        const priorityMatch = !filters.value.priority || ticket.priority.toLowerCase() === filters.value.priority.toLowerCase();
-        const statusMatch = !filters.value.status || ticket.status.toLowerCase() === filters.value.status.toLowerCase();
-
-        return searchMatches && startDateMatch && endDateMatch && priorityMatch && statusMatch;
-    });
-
-    return filteredTickets;
+const searchTickets = () => {
+    router.replace(route('tickets.index', { search: searchQuery.value.toLowerCase(), ...filters.value })); // Convert search query to lowercase
 };
 
-const filteredTickets = computed(() => {
-    return applyFilters();
-});
+
+// Function to apply filters
+const applyFilters = () => {
+    searchTickets();
+    console.log("🚀 ~ applyFilters ~ applyFilters:", "you my search")
+};
+
 
 // Function to format the date
 const formatDate = (dateString) => {
@@ -93,7 +82,7 @@ const breadcrumbItems = [
                 </select>
 
                 <!-- Apply filter button -->
-                <!-- <button @click="applyFilters" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Apply Filters</button> -->
+                <button @click="applyFilters" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Apply Filters</button>
             </div>
 
             <div class="overflow-x-auto shadow  sm:rounded-lg">
@@ -125,7 +114,7 @@ const breadcrumbItems = [
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-700">
-                    <tr v-for="ticket in filteredTickets" :key="ticket.id">
+                    <tr v-for="ticket in tickets.data" :key="ticket.id">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ ticket.id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ formatDate(ticket.created_at) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">{{ ticket.title }}</td>
