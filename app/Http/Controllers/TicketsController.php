@@ -29,7 +29,7 @@ class TicketsController extends Controller
         }
 
          // Apply date range filter if provided
-        if ($request->has('startDate') || $request->has('endDate')) {
+         if ($request->has('startDate') && $request->has('endDate')) {
             $startDate = $request->input('startDate');
             $endDate = $request->input('endDate');
             $query->whereBetween('created_at', [$startDate, $endDate]);
